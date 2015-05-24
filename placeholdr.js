@@ -96,25 +96,22 @@
 	//	options.overrideNative: Boolean. If truthy, override native placeholder
 	$.fn.placeholdr = function(options){
 		// ensure options exists (avoid null reference errors)
-		options || (options = {});
+		options || (options = { overrideNative: true, preserveOnFocus: true });
 		// Don't evaluate the polyfill if the browser supports placeholders
 		// unless an option specifies to override the native implementation
-		var overrideNative = options.overrideNative || false;
-		if (placeholderAttribute in document.createElement("input") &&
-				! overrideNative
-		) {
+		if (placeholderAttribute in document.createElement("input") && !options.overrideNative) {
 			return;
 		}
 
 		// Find and iterate through all inputs with a native placeholder attribute
-		$(this).find("["+placeholderAttribute+"]").each(function() {
+		$(this).each(function() {
 			var $this = $(this);
 
 			// leave now if we've polyfilled this element before (idempotent)
 			if ($this.data(ns)) return;
 			$this.data(ns, true);
 
-			if (overrideNative) {
+			if (options.overrideNative) {
 				// copy original placeholder text to alternate location
 				$this.attr(alternatePlaceholderAttribute,
 									 $this.attr(placeholderAttribute));
